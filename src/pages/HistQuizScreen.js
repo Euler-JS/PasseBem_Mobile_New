@@ -23,7 +23,7 @@ const convertImageUrl = (url) => {
     // Se contém a URL antiga da API, substitui pela nova do GitHub
     if (url.includes('https://api.passebem.co.mz/files/')) {
         const fileName = url.replace('https://api.passebem.co.mz/files/', '');
-        const newUrl = `https://raw.githubusercontent.com/Euler-JS/passebem_uploads/main/uploads/${fileName}`;
+        const newUrl = `http://mowosocw4sgwsk84kw4ks40c.62.171.183.132.sslip.io/files/${fileName}`;
         console.log('🔄 CONVERTENDO URL DA IMAGEM (HISTÓRICO):');
         console.log('📥 URL ANTIGA:', url);
         console.log('📤 URL NOVA:', newUrl);
@@ -32,7 +32,7 @@ const convertImageUrl = (url) => {
     
     // Se não tem a base da API, assume que é só o nome do arquivo
     if (!url.startsWith('http')) {
-        const newUrl = `https://raw.githubusercontent.com/Euler-JS/passebem_uploads/main/uploads/${url}`;
+        const newUrl = `http://mowosocw4sgwsk84kw4ks40c.62.171.183.132.sslip.io/files/${url}`;
         console.log('🔄 ADICIONANDO BASE URL GITHUB (HISTÓRICO):');
         console.log('📥 FILENAME:', url);
         console.log('📤 URL COMPLETA:', newUrl);

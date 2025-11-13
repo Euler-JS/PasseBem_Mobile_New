@@ -20,7 +20,7 @@ const PerfilScreen = ({navigation}) => {
     const onShare = async () => {
         try {
           const result = await Share.share({
-            message: 'Já está disponível a nova versão da "Passe Bem", encontre: \n* Apontamentos para leitura antes e depois de realizar os testes temáticos; \n* Acesso a video aulas online, de código de estrada (condições já criadas para arranque em datas a anunciar); \n*Partilha de vídeos do primeiro carro/primeira condução com habilitação para conduzir; \n*Acompanhamento através de gráficos do domínio dos temas e dos testes em geral; \n*Actualização da transitabilidade das vias em tempo real através de um mural; https://play.google.com/store/apps/details?id=mz.co.passebem.passebem',
+            message: 'Já está disponível a nova versão da "Passe Bem", encontre: \n* Apontamentos para leitura antes e depois de realizar os testes temáticos; \n* Acesso a video aulas online, de código de estrada (condições já criadas para arranque em datas a anunciar); \n*Partilha de vídeos do primeiro carro/primeira condução com habilitação para conduzir; \n*Acompanhamento através de gráficos do domínio dos temas e dos testes em geral; \n*Actualização da transitabilidade das vias em tempo real através de um mural; https://play.google.com/store/apps/details?id=mz.co.passebem.passebem2',
           });
           if (result.action === Share.sharedAction) {
             if (result.activityType) {

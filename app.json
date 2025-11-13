@@ -16,7 +16,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "mz.co.passebem.passebem"
+      "bundleIdentifier": "mz.co.passebem.passebem2"
     },
     "android": {
       "adaptiveIcon": {
