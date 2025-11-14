@@ -1,12 +1,24 @@
 {
   "build": {
-    "release": {},
+    "production": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "release": {
+      "android": {
+        "buildType": "app-bundle",
+        "image": "ubuntu-22.04-jdk-17-ndk-r26b",
+        "node": "20.18.0"
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal"
     }
   },
   "submit": {
+    "production": {},
     "release": {}
   }
 }

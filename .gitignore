@@ -11,3 +11,50 @@ web-build/
 
 # macOS
 .DS_Store
+# passebem_flutter/
+
+# Miscellaneous
+passebem_flutter/*.class
+passebem_flutter/*.log
+passebem_flutter/*.pyc
+passebem_flutter/*.swp
+passebem_flutter/.DS_Store
+passebem_flutter/.atom/
+passebem_flutter/.build/
+passebem_flutter/.buildlog/
+passebem_flutter/.history
+passebem_flutter/.svn/
+passebem_flutter/.swiftpm/
+passebem_flutter/migrate_working_dir/
+
+# IntelliJ related
+passebem_flutter/*.iml
+passebem_flutter/*.ipr
+passebem_flutter/*.iws
+passebem_flutter/.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+passebem_flutter/**/doc/api/
+passebem_flutter/**/ios/Flutter/.last_build_id
+passebem_flutter/.dart_tool/
+passebem_flutter/.flutter-plugins
+passebem_flutter/.flutter-plugins-dependencies
+passebem_flutter/.pub-cache/
+passebem_flutter/.pub/
+passebem_flutter/build/
+# Symbolication related
+passebem_flutter/app.*.symbols
+
+# Obfuscation related
+passebem_flutter/app.*.map.json
+
+# Android Studio will place build artifacts here
+passebem_flutter/android/app/debug
+passebem_flutter/android/app/profile
+passebem_flutter/android/app/release
+

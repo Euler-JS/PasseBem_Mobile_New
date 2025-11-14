@@ -24,7 +24,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "mz.co.passebem.passebem",
+      "package": "mz.co.passebem.passebem2",
       "versionCode": 17
     },
     "web": {
@@ -39,6 +39,11 @@
           "color": "#ffffff"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0f1863aa-c6ad-4627-b617-a30cf5a9c3a8"
+      }
+    }
   }
 }
