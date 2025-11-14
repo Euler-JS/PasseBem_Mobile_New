@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/news_home_page.dart';
 import 'package:news_app/pages/chat_page.dart';
+import 'package:news_app/pages/curso_page.dart';
+import 'package:news_app/pages/qp_page.dart';
+import 'package:news_app/pages/perfil_page.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -15,18 +18,36 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   final List<Widget> _pages = [
     const NewsHomePage(),
     const ChatPage(),
+    const CursoPage(),
+    const QpPage(),
+    const PerfilPage(),
   ];
 
   final List<NavigationItem> _navigationItems = [
     NavigationItem(
-      icon: Icons.home_outlined,
-      activeIcon: Icons.home,
-      label: 'Home',
+      icon: Icons.flag_outlined,
+      activeIcon: Icons.flag,
+      label: 'Partida',
     ),
     NavigationItem(
-      icon: Icons.chat_bubble_outline,
-      activeIcon: Icons.chat_bubble,
+      icon: Icons.forum_outlined,
+      activeIcon: Icons.forum,
       label: 'Chat',
+    ),
+    NavigationItem(
+      icon: Icons.tv,
+      activeIcon: Icons.tv,
+      label: 'Aulas',
+    ),
+    NavigationItem(
+      icon: Icons.help_outline,
+      activeIcon: Icons.help,
+      label: 'P&F',
+    ),
+    NavigationItem(
+      icon: Icons.person_outline,
+      activeIcon: Icons.person,
+      label: 'Perfil',
     ),
   ];
 
@@ -73,7 +94,7 @@ Widget build(BuildContext context) {
                     ),
                     decoration: BoxDecoration(
                       color: isActive 
-                          ? const Color(0xFFC7A87B).withOpacity(0.1)
+                          ? const Color(0xFFFFA000).withOpacity(0.1)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(8), // Reduzido de 12 para 8
                     ),
@@ -83,8 +104,8 @@ Widget build(BuildContext context) {
                         Icon(
                           isActive ? item.activeIcon : item.icon,
                           color: isActive 
-                              ? const Color(0xFFC7A87B)
-                              : const Color(0xFF333333).withOpacity(0.6),
+                              ? const Color(0xFFFFA000)
+                              : const Color(0xFFDDDDDD),
                           size: 22, // Reduzido de 24 para 22
                         ),
                         const SizedBox(height: 2), // Reduzido de 4 para 2
@@ -96,8 +117,8 @@ Widget build(BuildContext context) {
                                 ? FontWeight.w600 
                                 : FontWeight.normal,
                             color: isActive 
-                                ? const Color(0xFFC7A87B)
-                                : const Color(0xFF333333).withOpacity(0.6),
+                                ? const Color(0xFFFFA000)
+                                : const Color(0xFFDDDDDD),
                           ),
                           textAlign: TextAlign.center,
                         ),

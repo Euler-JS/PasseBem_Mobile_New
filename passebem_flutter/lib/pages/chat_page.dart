@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/services/auth_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -37,6 +38,24 @@ class _ChatPageState extends State<ChatPage> {
       
       // Converter mensagens da API para o formato local
       final loadedMessages = messagesData.map((msg) {
+        // Construir URLs completas para imagens e vídeos se necessário
+        String? imageUrl;
+        String? videoUrl;
+        
+        if (msg['image_name'] != null && msg['image_name'].toString().isNotEmpty) {
+          imageUrl = 'http://mowosocw4sgwsk84kw4ks40c.62.171.183.132.sslip.io/files/${msg['image_name']}';
+        } else if (msg['image'] != null && msg['image'].toString().isNotEmpty) {
+          final image = msg['image'].toString();
+          imageUrl = image.startsWith('http') ? image : 'http://mowosocw4sgwsk84kw4ks40c.62.171.183.132.sslip.io/files/$image';
+        }
+        
+        if (msg['video_name'] != null && msg['video_name'].toString().isNotEmpty) {
+          videoUrl = 'http://mowosocw4sgwsk84kw4ks40c.62.171.183.132.sslip.io/files/${msg['video_name']}';
+        } else if (msg['video'] != null && msg['video'].toString().isNotEmpty) {
+          final video = msg['video'].toString();
+          videoUrl = video.startsWith('http') ? video : 'http://mowosocw4sgwsk84kw4ks40c.62.171.183.132.sslip.io/files/$video';
+        }
+        
         return ChatMessage(
           id: msg['_id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
           text: msg['text']?.toString() ?? '',
@@ -46,10 +65,13 @@ class _ChatPageState extends State<ChatPage> {
               ? DateTime.parse(msg['createdAt'].toString())
               : DateTime.now(),
           isMe: false, // Será determinado comparando com ID do usuário atual
-          imageUrl: msg['image']?.toString(),
-          videoUrl: msg['video']?.toString(),
+          imageUrl: imageUrl,
+          videoUrl: videoUrl,
         );
       }).toList();
+      
+      // Ordenar mensagens por data (mais antigas primeiro, mais recentes no final)
+      loadedMessages.sort((a, b) => a.timestamp.compareTo(b.timestamp));
       
       // Obter ID do usuário atual para marcar mensagens próprias
       final currentUser = await AuthService.getStoredUser();
@@ -63,6 +85,17 @@ class _ChatPageState extends State<ChatPage> {
         _messages.clear();
         _messages.addAll(loadedMessages);
         _isLoading = false;
+      });
+      
+      // Rolar para o final após carregar mensagens
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
       });
     } catch (e) {
       print('Erro ao carregar mensagens: $e');
@@ -84,6 +117,17 @@ class _ChatPageState extends State<ChatPage> {
       if (success) {
         // Recarregar mensagens para obter a nova mensagem do servidor
         await _loadMessages();
+        
+        // Rolar para o final após enviar mensagem
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          }
+        });
       } else {
         // Mostrar erro se falhar
         if (mounted) {
@@ -188,7 +232,6 @@ class _ChatPageState extends State<ChatPage> {
                       )
                     : ListView.builder(
                         controller: _scrollController,
-                        reverse: true,
                         padding: const EdgeInsets.all(16),
                         itemCount: _messages.length,
                         itemBuilder: (context, index) {
@@ -299,7 +342,6 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 color: message.isMe
                     ? const Color(0xFFffc107)
@@ -313,12 +355,105 @@ class _ChatPageState extends State<ChatPage> {
                   ),
                 ],
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: message.isMe ? Colors.white : const Color(0xFF212121),
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Imagem
+                  if (message.imageUrl != null && message.imageUrl!.isNotEmpty)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        message.imageUrl!,
+                        width: 250,
+                        height: 250,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 250,
+                            height: 250,
+                            color: Colors.grey[300],
+                            child: const Icon(
+                              Icons.broken_image,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            width: 250,
+                            height: 250,
+                            color: Colors.grey[200],
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                                color: const Color(0xFFffc107),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  
+                  // Vídeo
+                  if (message.videoUrl != null && message.videoUrl!.isNotEmpty)
+                    Container(
+                      width: 250,
+                      height: 140,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          const Icon(
+                            Icons.play_circle_outline,
+                            size: 60,
+                            color: Colors.white,
+                          ),
+                          Positioned(
+                            bottom: 8,
+                            left: 8,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'Vídeo',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  
+                  // Texto
+                  if (message.text.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      child: Text(
+                        message.text,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: message.isMe ? Colors.white : const Color(0xFF212121),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             Padding(
@@ -353,7 +488,7 @@ class _ChatPageState extends State<ChatPage> {
               title: const Text('Enviar Imagem'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implementar envio de imagem
+                _sendImage();
               },
             ),
             ListTile(
@@ -361,21 +496,198 @@ class _ChatPageState extends State<ChatPage> {
               title: const Text('Enviar Vídeo'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implementar envio de vídeo
+                _sendVideo();
               },
             ),
             ListTile(
-              leading: const Icon(Icons.description, color: Color(0xFFffc107)),
-              title: const Text('Enviar Documento'),
+              leading: const Icon(Icons.camera_alt, color: Color(0xFFffc107)),
+              title: const Text('Tirar Foto'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implementar envio de documento
+                _takePhoto();
               },
             ),
           ],
         ),
       ),
     );
+  }
+  
+  Future<void> _sendImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      
+      if (image == null) return;
+      
+      // Mostrar loading
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: CircularProgressIndicator(color: Color(0xFFffc107)),
+          ),
+        );
+      }
+      
+      final success = await AuthService.sendImageMessage(image.path);
+      
+      if (mounted) {
+        Navigator.pop(context); // Fechar loading
+        
+        if (success) {
+          await _loadMessages();
+          
+          // Rolar para o final
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (_scrollController.hasClients) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Erro ao enviar imagem'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Erro ao enviar imagem: $e');
+      if (mounted) {
+        Navigator.pop(context); // Fechar loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao enviar imagem'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+  
+  Future<void> _takePhoto() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? photo = await picker.pickImage(source: ImageSource.camera);
+      
+      if (photo == null) return;
+      
+      // Mostrar loading
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: CircularProgressIndicator(color: Color(0xFFffc107)),
+          ),
+        );
+      }
+      
+      final success = await AuthService.sendImageMessage(photo.path);
+      
+      if (mounted) {
+        Navigator.pop(context); // Fechar loading
+        
+        if (success) {
+          await _loadMessages();
+          
+          // Rolar para o final
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (_scrollController.hasClients) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Erro ao enviar foto'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Erro ao tirar foto: $e');
+      if (mounted) {
+        Navigator.pop(context); // Fechar loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao tirar foto'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+  
+  Future<void> _sendVideo() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
+      
+      if (video == null) return;
+      
+      // Mostrar loading
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: CircularProgressIndicator(color: Color(0xFFffc107)),
+          ),
+        );
+      }
+      
+      final success = await AuthService.sendVideoMessage(video.path);
+      
+      if (mounted) {
+        Navigator.pop(context); // Fechar loading
+        
+        if (success) {
+          await _loadMessages();
+          
+          // Rolar para o final
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (_scrollController.hasClients) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Erro ao enviar vídeo'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Erro ao enviar vídeo: $e');
+      if (mounted) {
+        Navigator.pop(context); // Fechar loading
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao enviar vídeo'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   String _formatTimestamp(DateTime timestamp) {

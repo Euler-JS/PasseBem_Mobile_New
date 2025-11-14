@@ -400,6 +400,7 @@ class AuthService {
       final chatHeaders = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Authorization': user.id,
         'user': user.id,
       };
       
@@ -409,6 +410,9 @@ class AuthService {
         'avatar': 'https://oolhar.com.br/wp-content/uploads/2020/09/perfil-candidatos.jpg',
       };
       
+      print('Sending message with headers: $chatHeaders');
+      print('Sending message body: $body');
+      
       final response = await http.post(
         Uri.parse('$baseUrl/chattext'),
         headers: chatHeaders,
@@ -416,6 +420,7 @@ class AuthService {
       );
       
       print('Send text message response status: ${response.statusCode}');
+      print('Send text message response body: ${response.body}');
       
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
@@ -487,6 +492,56 @@ class AuthService {
     } catch (e) {
       print('Error sending video message: $e');
       return false;
+    }
+  }
+
+  // ===== MÉTODOS DE MÓDULOS/AULAS =====
+  
+  // Buscar módulos e vídeos de aula
+  static Future<Map<String, dynamic>> getModulos() async {
+    try {
+      final user = await getStoredUser();
+      if (user == null || user.id.isEmpty) {
+        throw Exception('User not logged in');
+      }
+      
+      final modulosHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': user.id,
+      };
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl/appmodulos'),
+        headers: modulosHeaders,
+      );
+      
+      print('Modulos response status: ${response.statusCode}');
+      
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        
+        // Retornar a estrutura completa com modulos e videos
+        if (jsonData['data'] != null) {
+          return {
+            'modulos': jsonData['data']['modulos'] ?? [],
+            'videos': jsonData['data']['videosaulas'] ?? [],
+          };
+        }
+        
+        return {
+          'modulos': [],
+          'videos': [],
+        };
+      } else {
+        throw Exception('Failed to load modulos: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching modulos: $e');
+      return {
+        'modulos': [],
+        'videos': [],
+      };
     }
   }
 }

@@ -42,6 +42,9 @@ dependencies:
   provider: ^6.1.1
   pay_with_paystack: ^1.0.14
   flutter_html: ^3.0.0-beta.2
+  image_picker: ^1.0.7
+  file_picker: ^6.1.1
+  share_plus: ^7.2.1
 
 dev_dependencies:
   flutter_test:
