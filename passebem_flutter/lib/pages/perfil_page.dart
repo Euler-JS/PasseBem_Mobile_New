@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../services/auth_service.dart';
 import '../Model/user_model.dart';
+import 'perfil_sub_pages.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({Key? key}) : super(key: key);
@@ -105,7 +106,8 @@ class _PerfilPageState extends State<PerfilPage> {
                   children: [
                     CircleAvatar(
                       radius: width * 0.13,
-                      backgroundImage: const NetworkImage(
+                      backgroundImage: NetworkImage(
+                        user?.profileImageUrl ?? 
                         'https://oolhar.com.br/wp-content/uploads/2020/09/perfil-candidatos.jpg',
                       ),
                       onBackgroundImageError: (exception, stackTrace) {
@@ -114,14 +116,14 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     SizedBox(height: height * 0.01),
                     Text(
-                      user?.username ?? user?.firstname ?? 'Usuário',
+                      user?.fullName ?? 'Usuário',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 19,
                       ),
                     ),
                     Text(
-                      user?.email ?? 'example@gmail.com',
+                      user?.displayEmail ?? 'example@gmail.com',
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 14,
@@ -159,8 +161,12 @@ class _PerfilPageState extends State<PerfilPage> {
                       icon: Icons.shield,
                       label: 'Privacidade',
                       onTap: () {
-                        // Navegar para tela de privacidade
-                        print('Navegar para Privacidade');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EditPerfilPage(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(height: height * 0.01),
@@ -168,8 +174,12 @@ class _PerfilPageState extends State<PerfilPage> {
                       icon: Icons.file_copy,
                       label: 'Material Didáctico',
                       onTap: () {
-                        // Navegar para material didático
-                        print('Navegar para Material Didáctico');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CategoriaDidaticaPage(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(height: height * 0.01),
@@ -177,8 +187,12 @@ class _PerfilPageState extends State<PerfilPage> {
                       icon: Icons.history,
                       label: 'Histórico Académico',
                       onTap: () {
-                        // Navegar para histórico acadêmico
-                        print('Navegar para Histórico Académico');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HistoricoAcademicoPage(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(height: height * 0.01),
@@ -186,8 +200,12 @@ class _PerfilPageState extends State<PerfilPage> {
                       icon: Icons.history,
                       label: 'Histórico de Compras',
                       onTap: () {
-                        // Navegar para histórico de compras
-                        print('Navegar para Histórico de Compras');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HistoricoComprasPage(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(height: height * 0.01),
@@ -195,8 +213,12 @@ class _PerfilPageState extends State<PerfilPage> {
                       icon: Icons.help_outline,
                       label: 'Ajuda e Suporte',
                       onTap: () {
-                        // Navegar para ajuda e suporte
-                        print('Navegar para Ajuda e Suporte');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SupportPage(),
+                          ),
+                        );
                       },
                     ),
                     SizedBox(height: height * 0.01),

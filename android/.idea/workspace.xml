@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="396e16be-3b3d-423b-ba47-00f29bb83908" name="Changes" comment="" />
+    <list default="true" id="396e16be-3b3d-423b-ba47-00f29bb83908" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../passebem_flutter/lib/pages/perfil_sub_pages.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../passebem_flutter/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../passebem_flutter/android/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../passebem_flutter/android/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../passebem_flutter/android/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../passebem_flutter/lib/Model/user_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../passebem_flutter/lib/Model/user_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../passebem_flutter/lib/pages/perfil_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../passebem_flutter/lib/pages/perfil_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../passebem_flutter/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../passebem_flutter/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../passebem_flutter/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../passebem_flutter/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../passebem_flutter/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../passebem_flutter/pubspec.yaml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

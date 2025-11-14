@@ -44,6 +44,38 @@ class UserAddress {
   }
 }
 
+class UserInf {
+  final String? nome;
+  final String? email;
+  final String? telefone;
+  final String? perfilUrl;
+
+  UserInf({
+    this.nome,
+    this.email,
+    this.telefone,
+    this.perfilUrl,
+  });
+
+  factory UserInf.fromJson(Map<String, dynamic> json) {
+    return UserInf(
+      nome: json['nome'],
+      email: json['email'],
+      telefone: json['telefone'],
+      perfilUrl: json['perfil_url'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nome': nome,
+      'email': email,
+      'telefone': telefone,
+      'perfil_url': perfilUrl,
+    };
+  }
+}
+
 class UserModel {
   final String id;
   final String numero;
@@ -53,6 +85,7 @@ class UserModel {
   final String? lastname;
   final String? mobile;
   final UserAddress? address;
+  final UserInf? userInf;
   final DateTime? emailVerifiedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -66,6 +99,7 @@ class UserModel {
     this.lastname,
     this.mobile,
     this.address,
+    this.userInf,
     this.emailVerifiedAt,
     required this.createdAt,
     required this.updatedAt,
@@ -73,35 +107,23 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     // Verificar se a resposta tem a estrutura da API (com user_inf)
+    UserInf? userInf;
     if (json['user_inf'] != null) {
-      final userInf = json['user_inf'] as Map<String, dynamic>;
-      return UserModel(
-        id: json['id']?.toString() ?? json['_id']?.toString() ?? '0',
-        numero: json['numero']?.toString() ?? '',
-        email: userInf['email'],
-        username: userInf['nome'],
-        firstname: userInf['nome']?.split(' ')?.first,
-        lastname: userInf['nome']?.split(' ')?.skip(1)?.join(' '),
-        mobile: userInf['telefone'],
-        address: null, // Não há dados de endereço na resposta
-        emailVerifiedAt: null,
-        createdAt: DateTime.now(), // Não há data na resposta
-        updatedAt: DateTime.now(),
-      );
+      userInf = UserInf.fromJson(json['user_inf'] as Map<String, dynamic>);
     }
 
-    // Estrutura padrão (fallback)
     return UserModel(
-      id: json['id']?.toString() ?? '0',
-      numero: json['numero'] ?? '',
-      email: json['email'],
-      username: json['username'],
-      firstname: json['firstname'],
+      id: json['id']?.toString() ?? json['_id']?.toString() ?? '0',
+      numero: json['numero']?.toString() ?? '',
+      email: json['email'] ?? userInf?.email,
+      username: json['username'] ?? userInf?.nome,
+      firstname: json['firstname'] ?? userInf?.nome?.split(' ').first,
       lastname: json['lastname'],
-      mobile: json['mobile'],
+      mobile: json['mobile'] ?? userInf?.telefone,
       address: json['address'] != null
           ? UserAddress.fromJson(json['address'])
           : null,
+      userInf: userInf,
       emailVerifiedAt: json['email_verified_at'] != null
           ? DateTime.parse(json['email_verified_at'])
           : null,
@@ -120,6 +142,7 @@ class UserModel {
       'lastname': lastname,
       'mobile': mobile,
       'address': address?.toJson(),
+      'user_inf': userInf?.toJson(),
       'email_verified_at': emailVerifiedAt?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
@@ -127,6 +150,9 @@ class UserModel {
   }
 
   String get fullName {
+    if (userInf?.nome != null) {
+      return userInf!.nome!;
+    }
     if (firstname != null && lastname != null) {
       return '$firstname $lastname';
     }
@@ -135,6 +161,15 @@ class UserModel {
 
   String get displayName {
     return fullName.isNotEmpty ? fullName : (email ?? numero);
+  }
+
+  String get displayEmail {
+    return userInf?.email ?? email ?? 'example@gmail.com';
+  }
+
+  String get profileImageUrl {
+    return userInf?.perfilUrl ?? 
+           'https://oolhar.com.br/wp-content/uploads/2020/09/perfil-candidatos.jpg';
   }
 }
 
