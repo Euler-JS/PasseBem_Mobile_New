@@ -353,4 +353,140 @@ class AuthService {
       throw Exception('Error fetching temas: $e');
     }
   }
+
+  // ===== MÉTODOS DE CHAT =====
+  
+  // Buscar todas as mensagens do chat
+  static Future<List<dynamic>> getChatMessages() async {
+    try {
+      final user = await getStoredUser();
+      if (user == null || user.id.isEmpty) {
+        throw Exception('User not logged in');
+      }
+      
+      final chatHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': user.id,
+      };
+      
+      final response = await http.get(
+        Uri.parse('$baseUrl/chatall'),
+        headers: chatHeaders,
+      );
+      
+      print('Chat messages response status: ${response.statusCode}');
+      
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        return jsonData as List<dynamic>;
+      } else {
+        throw Exception('Failed to load chat messages: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching chat messages: $e');
+      return [];
+    }
+  }
+  
+  // Enviar mensagem de texto
+  static Future<bool> sendTextMessage(String text) async {
+    try {
+      final user = await getStoredUser();
+      if (user == null || user.id.isEmpty) {
+        throw Exception('User not logged in');
+      }
+      
+      final chatHeaders = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'user': user.id,
+      };
+      
+      final body = {
+        'text': text,
+        'name': user.username ?? user.firstname ?? 'user',
+        'avatar': 'https://oolhar.com.br/wp-content/uploads/2020/09/perfil-candidatos.jpg',
+      };
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/chattext'),
+        headers: chatHeaders,
+        body: json.encode(body),
+      );
+      
+      print('Send text message response status: ${response.statusCode}');
+      
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print('Error sending text message: $e');
+      return false;
+    }
+  }
+  
+  // Enviar imagem
+  static Future<bool> sendImageMessage(String imagePath) async {
+    try {
+      final user = await getStoredUser();
+      if (user == null || user.id.isEmpty) {
+        throw Exception('User not logged in');
+      }
+      
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/chatimagem'),
+      );
+      
+      request.headers['Authorization'] = user.id;
+      
+      request.files.add(
+        await http.MultipartFile.fromPath('imagem', imagePath),
+      );
+      
+      request.fields['name'] = user.username ?? user.firstname ?? 'user';
+      request.fields['avatar'] = 'https://oolhar.com.br/wp-content/uploads/2020/09/perfil-candidatos.jpg';
+      
+      final response = await request.send();
+      
+      print('Send image message response status: ${response.statusCode}');
+      
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print('Error sending image message: $e');
+      return false;
+    }
+  }
+  
+  // Enviar vídeo
+  static Future<bool> sendVideoMessage(String videoPath) async {
+    try {
+      final user = await getStoredUser();
+      if (user == null || user.id.isEmpty) {
+        throw Exception('User not logged in');
+      }
+      
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/chatvideo'),
+      );
+      
+      request.headers['Authorization'] = user.id;
+      
+      request.files.add(
+        await http.MultipartFile.fromPath('imagem', videoPath),
+      );
+      
+      request.fields['name'] = user.username ?? user.firstname ?? 'user';
+      request.fields['avatar'] = 'https://oolhar.com.br/wp-content/uploads/2020/09/perfil-candidatos.jpg';
+      
+      final response = await request.send();
+      
+      print('Send video message response status: ${response.statusCode}');
+      
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      print('Error sending video message: $e');
+      return false;
+    }
+  }
 }

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/news_home_page.dart';
-import 'package:news_app/pages/categories_page.dart';
-import 'package:news_app/pages/podcasts_page.dart';
-import 'package:news_app/pages/bookmarks_page.dart';
-import 'package:news_app/pages/videos_page.dart';
-import 'package:news_app/pages/subscription_plans_new.dart';
+import 'package:news_app/pages/chat_page.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -18,11 +14,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   final List<Widget> _pages = [
     const NewsHomePage(),
-    const CategoriesPage(),
-    const PodcastsPage(),
-    const BookmarksPage(),
-    // const VideosPage(),
-    const SubscriptionPlansPage(),
+    const ChatPage(),
   ];
 
   final List<NavigationItem> _navigationItems = [
@@ -32,24 +24,9 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       label: 'Home',
     ),
     NavigationItem(
-      icon: Icons.category_outlined,
-      activeIcon: Icons.category,
-      label: 'Categorias',
-    ),
-    NavigationItem(
-      icon: Icons.podcasts_outlined,
-      activeIcon: Icons.podcasts,
-      label: 'Podcasts',
-    ),
-    NavigationItem(
-      icon: Icons.bookmark_outline,
-      activeIcon: Icons.bookmark,
-      label: 'Bookmarks',
-    ),
-    NavigationItem(
-      icon: Icons.workspace_premium_outlined,
-      activeIcon: Icons.workspace_premium,
-      label: 'Premium',
+      icon: Icons.chat_bubble_outline,
+      activeIcon: Icons.chat_bubble,
+      label: 'Chat',
     ),
   ];
 
